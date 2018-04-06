@@ -25,3 +25,17 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+buildscript {
+    // 添加MobSDK的maven地址
+    repositories {
+        maven {
+            url "http://mvn.mob.com/android"
+        }
+    }
+
+    dependencies {
+        // 注册MobSDK
+        classpath 'com.mob.sdk:MobSDK:+'
+    }
+}
