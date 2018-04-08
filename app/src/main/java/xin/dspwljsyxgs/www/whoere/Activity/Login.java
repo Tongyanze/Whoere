@@ -1,8 +1,10 @@
 package xin.dspwljsyxgs.www.whoere.Activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.time.Year;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -22,10 +26,12 @@ import xin.dspwljsyxgs.www.whoere.R;
 import xin.dspwljsyxgs.www.whoere.Util.Loginconf;
 
 public class Login extends AppCompatActivity implements View.OnClickListener{
+    Context context=MyApplication.getContext();
     private Button btn;
     private TextView btn_reg;
     private EditText ed1,ed2;
     private ProgressDialog progressDialog;
+    Handler handler = new Handler();
     String account="",password="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,75 +49,79 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         btn_reg.setOnClickListener(this);
 
     }
+
+
+    public void login(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                try {
+                    account=ed1.getText().toString();
+                    password=ed2.getText().toString();
+
+                    OkHttpClient client = new OkHttpClient();
+                    //上传数据
+                    RequestBody requestBody = new FormBody.Builder()
+                            .add("password", password)
+                            .add("account", account)
+                            .build();
+                    Request request = new Request.Builder()
+                            .url("http://202.194.15.232:8088/whoere/login")//服务器网址
+                            .post(requestBody)
+                            .build();
+                    try {
+                        //获得返回数据
+                        Response response = client.newCall(request).execute();
+                        String responseData = response.body().string();
+
+                        {
+                            if (responseData.equals("nosuchid")) {
+                                progressDialog.cancel();
+                                Toast.makeText(MyApplication.getContext(), "该用户名不存在", Toast.LENGTH_LONG).show();
+                                //Intent intent = new Intent(Signup2Activity.this, LoginActivity.class);
+                                //startActivity(intent);
+                                //finish();
+                            }
+                            else if (responseData.equals("false")) {
+                                progressDialog.cancel();
+                                Toast.makeText(MyApplication.getContext(), "密码错误", Toast.LENGTH_SHORT).show();
+                            }
+                            else  {
+                                //Toast.makeText(Login.this,responseData.toString(), Toast.LENGTH_SHORT).show();
+                                String id=responseData.toString().substring(4);
+                                progressDialog.cancel();
+                                SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
+                                editor.putString("account",account);
+                                editor.putString("password",password);
+                                editor.putString("id",id);
+                                editor.apply();
+                                Toast.makeText(MyApplication.getContext(), "登陆成功", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(Login.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }).start();
+    }
+
+
     public void onClick(View view){
         switch (view.getId()){
             case R.id.login_btn:
-                new Thread(new Runnable(){
-                    public void run(){
-                        Looper.prepare();
-                        progressDialog.show();
-                        Looper.loop();
-                    }
-                }).start();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
-                        try {
-                            account=ed1.getText().toString();
-                            password=ed2.getText().toString();
-
-                            OkHttpClient client = new OkHttpClient();
-                            //上传数据
-                            RequestBody requestBody = new FormBody.Builder()
-                                    .add("password", password)
-                                    .add("account", account)
-                                    .build();
-                            Request request = new Request.Builder()
-                                    .url("http://202.194.15.232:8088/whoere/login")//服务器网址
-                                    .post(requestBody)
-                                    .build();
-                            try {
-                                //获得返回数据
-                                Response response = client.newCall(request).execute();
-                                String responseData = response.body().string();
-
-                                {
-                                    if (responseData.equals("nosuchid")) {
-                                        progressDialog.cancel();
-                                        Toast.makeText(MyApplication.getContext(), "该用户名不存在", Toast.LENGTH_LONG).show();
-                                        //Intent intent = new Intent(Signup2Activity.this, LoginActivity.class);
-                                        //startActivity(intent);
-                                        //finish();
-                                    }
-                                    else if (responseData.equals("false")) {
-                                        progressDialog.cancel();
-                                        Toast.makeText(MyApplication.getContext(), "密码错误", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else  {
-                                        progressDialog.cancel();
-                                        SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
-                                        editor.putString("account",account);
-                                        editor.putString("password",password);
-                                        editor.apply();
-                                        Toast.makeText(MyApplication.getContext(), "登陆成功", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(Login.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-
-                                    }
-
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        Looper.loop();
-                    }
-                }).start();
+                progressDialog.show();
+                login();
                 break;
             case R.id.reg_ac:
                 Intent intent = new Intent(Login.this,Register_Activity_nophone.class);

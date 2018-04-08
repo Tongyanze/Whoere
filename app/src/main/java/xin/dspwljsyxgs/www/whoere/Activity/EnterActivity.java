@@ -96,6 +96,12 @@ public class EnterActivity extends Activity{
                                 }
                                 else  {
                                     val=3;
+                                    String id=responseData.toString().substring(4);
+                                    SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
+                                    editor.putString("account",account);
+                                    editor.putString("password",password);
+                                    editor.putString("id",id);
+                                    editor.apply();
                                     Toast.makeText(MyApplication.getContext(), "欢迎回来", Toast.LENGTH_SHORT).show();
                                     handler.postDelayed(new Runnable() {  //使用handler的postDelayed实现延时跳转
 

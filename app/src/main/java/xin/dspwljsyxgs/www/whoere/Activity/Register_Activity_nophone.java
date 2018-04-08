@@ -3,6 +3,7 @@ package xin.dspwljsyxgs.www.whoere.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
     private EditText ed1,ed2,ed3;
     private ProgressDialog progressDialog;
     int val1=0,val2=0;
+    Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,34 +47,24 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
     public void onClick(View view){
         switch (view.getId()){
             case R.id.reg_regbtn:
-                new Thread(new Runnable(){
-                   public void run(){
-                       Looper.prepare();
-                       progressDialog.show();
-                       Looper.loop();
-                   }
-                }).start();
-                checkAccount();
+                progressDialog.show();
+                checkPassword();
 
+                if (val2 == 2) checkAccount();
                 break;
         }
     }
 
 
     private void checkAccount() {
-
-
-
-
-
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Looper.prepare();
                 try {
+                    //Toast.makeText(Register_Activity_nophone.this,val2+"",Toast.LENGTH_SHORT).show();
 
-                    checkPassword();
-                    if (val2 != 2) return;
+
                     OkHttpClient client = new OkHttpClient();
                     //上传数据
                     RequestBody requestBody = new FormBody.Builder()
@@ -83,6 +75,7 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
                             .url("http://202.194.15.232:8088/whoere/register")//服务器网址
                             .post(requestBody)
                             .build();
+
                     try {
                         //获得返回数据
                         Response response = client.newCall(request).execute();
@@ -98,15 +91,18 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
                                 //finish();
                             }
                             else {
-                                progressDialog.cancel();
+
                                 Toast.makeText(Register_Activity_nophone.this,"注册成功",Toast.LENGTH_SHORT).show();
                                 String account=ed1.getText().toString();
+                                String id=responseData.toString().substring(4);
                                 SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
                                 editor.putString("account",account);
                                 editor.putString("password",ed2.getText().toString());
+                                editor.putString("id",id);
                                 editor.apply();
                                 Intent intent=new Intent(Register_Activity_nophone.this,MainActivity.class);
                                 startActivity(intent);
+                                progressDialog.cancel();
                                 finish();
 
                             }
@@ -129,17 +125,20 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
         String passwd = ed2.getText().toString();
         String confpasswd=ed3.getText().toString();
         if (passwd.length() < 6) {
-            Toast.makeText(this, "密码不能少于6位", Toast.LENGTH_SHORT).show();
+            progressDialog.cancel();
+            Toast.makeText(Register_Activity_nophone.this, "密码不能少于6位", Toast.LENGTH_SHORT).show();
             val2 =1;
             return;
         }
         else if (!passwd.equals(confpasswd)){
-            Toast.makeText(this,"两次密码不一致！",Toast.LENGTH_SHORT).show();
+            progressDialog.cancel();
+            Toast.makeText(Register_Activity_nophone.this,"两次密码不一致！",Toast.LENGTH_SHORT).show();
             val2=1;
             return;
         }
         else if (passwd.length() > 20 || confpasswd.length() > 20){
-            Toast.makeText(this,"密码过长",Toast.LENGTH_SHORT).show();
+            progressDialog.cancel();
+            Toast.makeText(Register_Activity_nophone.this,"密码过长",Toast.LENGTH_SHORT).show();
             val2=1;
             return;
         }
