@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <!-- 用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 用于访问GPS定位 -->
@@ -73,7 +75,17 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".Test"></activity>
+        <activity android:name=".Test" />
+        <activity android:name=".Activity.Login_sdu" />
+        <activity android:name=".Activity.ChangeUserinfo"/>
+
+
+        <service
+            android:name=".Service.getLocation"
+            android:enabled="true"
+            android:exported="true" />
+
+
     </application>
 
 </manifest>

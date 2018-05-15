@@ -2,7 +2,7 @@ package xin.dspwljsyxgs.www.whoere.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.ViewAnimator;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -20,7 +19,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import xin.dspwljsyxgs.www.whoere.MyApplication;
 import xin.dspwljsyxgs.www.whoere.R;
-import xin.dspwljsyxgs.www.whoere.Util.Loginconf;
+import xin.dspwljsyxgs.www.whoere.Util.Deal_Graphics;
+import xin.dspwljsyxgs.www.whoere.Util.PersonalInfo;
 
 public class Register_Activity_nophone extends AppCompatActivity implements View.OnClickListener{
     private Button btn1;
@@ -44,13 +44,23 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
 
     }
 
+    @Override
     public void onClick(View view){
         switch (view.getId()){
             case R.id.reg_regbtn:
                 progressDialog.show();
                 checkPassword();
-
-                if (val2 == 2) checkAccount();
+                if (val2 == 2) {
+                    if (ed1.getText().toString().length()==0) {
+                        progressDialog.cancel();
+                        Toast.makeText(Register_Activity_nophone.this,"用户名不能为空",Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        checkAccount();
+                    }
+                }
+                break;
+            default:
                 break;
         }
     }
@@ -67,12 +77,16 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
 
                     OkHttpClient client = new OkHttpClient();
                     //上传数据
+                    String headicon = Deal_Graphics.convertBitmapToString(BitmapFactory.decodeResource(
+                            getResources(), R.drawable.headicon));
                     RequestBody requestBody = new FormBody.Builder()
                             .add("account", ed1.getText().toString())
                             .add("password",ed2.getText().toString())
+                            .add("headicon",headicon)
+                            .add("kind","1")
                             .build();
                     Request request = new Request.Builder()
-                            .url("http://202.194.15.232:8088/whoere/register")//服务器网址
+                            .url("http://39.106.126.202:8088/whoere/register")//服务器网址
                             .post(requestBody)
                             .build();
 
@@ -80,26 +94,31 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
                         //获得返回数据
                         Response response = client.newCall(request).execute();
                         String responseData = response.body().string();
+                        //Toast.makeText(Register_Activity_nophone.this,responseData,Toast.LENGTH_SHORT).show();
 
-                        {
                             //Toast.makeText(Register_Activity_nophone.this,responseData.toString(),Toast.LENGTH_SHORT).show();
                             if (responseData.equals("false")) {
                                 progressDialog.cancel();
                                 Toast.makeText(MyApplication.getContext(), "该用户名已被注册", Toast.LENGTH_LONG).show();
-                                //Intent intent = new Intent(Signup2Activity.this, LoginActivity.class);
-                                //startActivity(intent);
-                                //finish();
                             }
                             else {
 
                                 Toast.makeText(Register_Activity_nophone.this,"注册成功",Toast.LENGTH_SHORT).show();
                                 String account=ed1.getText().toString();
+                                String password=ed2.getText().toString();
                                 String id=responseData.toString().substring(4);
-                                SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
-                                editor.putString("account",account);
-                                editor.putString("password",ed2.getText().toString());
-                                editor.putString("id",id);
-                                editor.apply();
+                                String icon = Deal_Graphics.convertBitmapToString(BitmapFactory.decodeResource(
+                                        getResources(), R.drawable.headicon));
+                                //Toast.makeText(Register_Activity_nophone.this,icon.length()+"",Toast.LENGTH_SHORT).show();
+                                PersonalInfo personalInfo =new PersonalInfo(account,password,id,icon);
+                                personalInfo.saveKind("1");
+                                personalInfo.saveuserinfo();
+
+//                                SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
+//                                editor.putString("account",account);
+//                                editor.putString("password",ed2.getText().toString());
+//                                editor.putString("id",id);
+//                                editor.apply();
                                 Intent intent=new Intent(Register_Activity_nophone.this,MainActivity.class);
                                 startActivity(intent);
                                 progressDialog.cancel();
@@ -107,12 +126,13 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
 
                             }
 
-                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                 } catch (Exception e) {
+                    Toast.makeText(Register_Activity_nophone.this,e.toString(),Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
                 Looper.loop();
@@ -143,5 +163,13 @@ public class Register_Activity_nophone extends AppCompatActivity implements View
             return;
         }
         val2=2;
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        Intent intent = new Intent(Register_Activity_nophone.this,Login.class);
+        startActivity(intent);
+        finish();
     }
 }

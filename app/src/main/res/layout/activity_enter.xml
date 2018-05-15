@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/timg"
+        android:src="@drawable/enter_bcg"
         android:scaleType="fitXY"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,15 +18,26 @@
         android:gravity="right">
 
     </LinearLayout>
-    <TextView
-        android:layout_marginTop="120dp"
-        android:layout_marginLeft="30dp"
+    <xin.dspwljsyxgs.www.whoere.fonts.YutyuanText
+        android:id="@+id/title"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#233f64"
+        android:textColor="#04c8e2"
         android:textSize="60sp"
         android:text="Whoere"
         android:gravity="left"
         />
+    <xin.dspwljsyxgs.www.whoere.fonts.YutyuanText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="发现身边的精彩"
+        android:textSize="30sp"
+        android:textColor="#04c8e2"
+        android:layout_below="@id/title"
+        android:layout_marginTop="80dp"
+        android:gravity="end"
+        android:layout_marginRight="30dp"/>
 
 </RelativeLayout>

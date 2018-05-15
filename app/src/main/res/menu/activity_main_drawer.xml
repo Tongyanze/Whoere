@@ -17,25 +17,23 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Slideshow" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/user_info"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="个人资料" />
     </group>
 
-    <item android:title="Communicate">
+
+    <item android:title="Options">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-           <!-- <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />-->
-            <item
                 android:id="@+id/nav_exit"
-                android:icon="@drawable/ic_menu_send"
-                android:title="注销" />
+                android:icon="@drawable/ic_changeuser"
+                android:title="切换用户" />
+            <item
+                android:id="@+id/exit"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="退出应用"
+                />
         </menu>
     </item>
 

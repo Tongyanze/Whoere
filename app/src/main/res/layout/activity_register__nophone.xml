@@ -29,10 +29,10 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="用  户  名"/>
+                android:text="用   户   名"/>
             <EditText
                 android:id="@+id/reg_discode"
                 android:layout_weight="4"
@@ -63,10 +63,10 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="密         码"/>
+                android:text="密          码"/>
             <EditText
                 android:id="@+id/reg_passwd"
                 android:layout_weight="1"
@@ -88,10 +88,10 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="确认密码"/>
+                android:text="确 认 密 码"/>
             <EditText
                 android:id="@+id/reg_confpasswd"
                 android:layout_marginLeft="10dp"

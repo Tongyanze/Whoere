@@ -77,7 +77,7 @@ public class Location extends Service {
 // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
 //启动定位
         mLocationClient.startLocation();
-        handler.postDelayed(runnable,0);
+        handler.postDelayed(runnable,1000);
 
 
 
@@ -90,8 +90,10 @@ public class Location extends Service {
 
                     try {
                         double x = getx();
-                        double y=gety();
+                        double y = gety();
+
                         //Toast.makeText(MyApplication.getContext(),id+" "+x+"  "+y,Toast.LENGTH_SHORT).show();
+
                         OkHttpClient client = new OkHttpClient();
                         //上传数据
                         //Toast.makeText(MyApplication.getContext(),id+"",Toast.LENGTH_SHORT).show();
@@ -101,7 +103,7 @@ public class Location extends Service {
                                 .add("y", y+"")
                                 .build();
                         Request request = new Request.Builder()
-                                .url("http://202.194.15.232:8088/whoere/Location")//服务器网址
+                                .url("http://39.106.126.202:8088/whoere/Location")//服务器网址
                                 .post(requestBody)
                                 .build();
                         try {
@@ -110,8 +112,6 @@ public class Location extends Service {
                                 @Override
                                 public void run() {
                                     Looper.prepare();
-
-
                                 try {
 
                                     Response response = client.newCall(request).execute();
@@ -168,10 +168,11 @@ public class Location extends Service {
                     df.format(date);//定位时间
                 } else {
                     //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
-                    Toast.makeText(context, amapLocation.getErrorCode() + "  " + amapLocation.getErrorInfo(), Toast.LENGTH_SHORT).show();
-                    Log.e("AmapError", "location Error, ErrCode:"
-                            + amapLocation.getErrorCode() + ", errInfo:"
-                            + amapLocation.getErrorInfo());
+                    Toast.makeText(context,"网络异常",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, amapLocation.getErrorCode() + "  " + amapLocation.getErrorInfo(), Toast.LENGTH_SHORT).show();
+                    //Log.e("AmapError", "location Error, ErrCode:"
+                          //  + amapLocation.getErrorCode() + ", errInfo:"
+                           // + amapLocation.getErrorInfo());
                 }
             }
 
@@ -181,8 +182,9 @@ public class Location extends Service {
 
     @Override
     public void onDestroy(){
-        mLocationClient.stopLocation();
         super.onDestroy();
+        mLocationClient.stopLocation();
+        mLocationClient.onDestroy();
     }
 
 
