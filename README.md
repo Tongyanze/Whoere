@@ -8,4 +8,4 @@
 
 线程用的比较混乱，以后要改线程池的。。。
 
-![] (https://github.com/Tongyanze/Whoere/pic/0725_11.jpg)
+![] (https://github.com/Tongyanze/Whoere/blob/master/pic/0725_11.jpg)
